@@ -23,6 +23,7 @@ function rozard_metabox() {
 
         foreach( $forms as $form ) {
 
+            /*
             add_meta_box(
                 $form['unique'],
 				__( $form['titles'] , 'rozard-engine' ),
@@ -30,7 +31,7 @@ function rozard_metabox() {
                 $form['filter'],
                 $form['context'],
 				null,
-			);
+			); */
         }
     }
 }
