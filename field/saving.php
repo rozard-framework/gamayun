@@ -1,32 +1,28 @@
 <?php
 
-declare(strict_types=1);
-if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_form' )  ){ exit; }
-
-if ( ! function_exists( 'rozard_field_saving ' ) ) {
 
 
-    /** INITIALIZE */
-
-        function rozard_field_saving( string $id, string $object, array $fields ) {
+/** OPERATION */
 
 
-            // MODE SELECTIVE
-
-            call_user_func( 'field_saving_'. $object, $id, $fields );
+    function rozard_saving_field( string $unique, $policy, string $refs, array $fields, $args ) {
+        foreach( $fields as $field_id => $field ) {
+            $field_type = sanitize_key( $field['type'] );
+            call_user_func( 'saving_field_' . $field_type , $unique, $field_id, $policy, $refs, $field, $args );
         }
+    }
+
+    function rozard_saving_media_field( string $unique, $policy, string $refs, array $field, $args ) {
+        $field_type = sanitize_key( $field['type'] );
+        $value = call_user_func( 'saving_field_' . $field_type , $unique, $unique, $policy, $refs, $field, $args );
+        return $value;
+    }
 
 
 
-        function field_saving_metabox( string $id, array $fields ) {
+/** METHOD */
 
-            
-
-
-        }
-
-
-    /** SAVING METHOD */
-        
-        
-}
+    function saving_field_text( string $unique, string $field_id,  $policy, string $refs, array $field, $args ) {
+        require_once  rozard_forms . 'field/saving/native-text.php';
+        proto_saving_text_field(  $unique, $field_id, $policy, $refs, $field, $args );
+    }

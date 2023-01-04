@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_form' )  ){ exit; }
+if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_forms' )  ){ exit; }
 
 if ( ! trait_exists('proto_render_radio_field') ){ 
 

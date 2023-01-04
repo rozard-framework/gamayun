@@ -3,17 +3,16 @@
 
 /** FORMS POLICY */
 
-    function render_form_policy( string $object, $args ) {
-        if ( $object === 'metabox' ) {
-            rozard_metabox_render_form_policy( $args );
-        }
-    }
-
 
     // RENDER METHOD
-    function rozard_metabox_render_form_policy( $post_id ) {
-        $encryption = get_post_meta( $post_id, 'data-encryption-policy', true );
-        $diseminate = get_post_meta( $post_id, 'disemination-policy', true );
+    function rozard_render_general_form_policy( string $object, $args ) {
+        
+    }
+
+  
+    function rozard_metabox_render_form_policy( string $object, int $args ) {
+        $encryption = get_post_meta( $args, 'data-encryption-policy', true );
+        $diseminate = get_post_meta( $args, 'disemination-policy', true );
         rozard_render_layout_form_policy( $encryption, $diseminate );
     }
 

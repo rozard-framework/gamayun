@@ -1,10 +1,10 @@
 <?php
 
 declare(strict_types=1);
-if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_form' )  ){ exit; }
+if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_forms' )  ){ exit; }
 
 
-/** RENDER FIELDS */
+/** RENDER FIELD */
 
     if ( ! function_exists('proto_render_checkbox_field') ){ 
 
@@ -26,4 +26,29 @@ if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) |
             printf('<label>%s</label>', esc_html( $label ) );
 
         }
+    };
+
+/** SAVING FIELD */
+
+    if ( ! function_exists('proto_saving_checkbox_field') ){ 
+
+        function proto_saving_checkbox_field( string $object_id, string $field_id, string $object, array $field, $args = null ){
+
+            call_user_func( $object .'_saving_checkbox_field', $object_id, $field_id, $field, $args );
+
+        }
+
+        // METABOX OBJECT
+        function metabox_saving_checkbox_field( $object_id, $field_id, $field, $post_id ) {
+
+            $key_id = $object_id .'_'. $field_id;
+
+            if( isset( $_POST[ $key_id  ] ) ) {
+                update_post_meta( $post_id, $key_id , sanitize_text_field( $_POST[ $key_id ] ) );
+            } else {
+                delete_post_meta( $post_id, $key_id );
+            }
+        }
+
+        // CHEKBOX SAVING HELPER
     };

@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_form' )  ){ exit; }
+if ( ! defined('ABSPATH') || ! defined('WP_LIBRARY')  || ! defined( 'rozard' ) || ! defined( 'rozard_forms' )  ){ exit; }
 if ( ! function_exists('proto_multiple_field') ){ 
 
     function proto_render_multiple_field( string $field_id, string $attrb = null , $field = array() ){
