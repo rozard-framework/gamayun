@@ -26,7 +26,7 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
             define( 'rozard_forms', __DIR__ . '/' );
             define( 'rozard_field', rozard_forms . 'fields/' );
             require_once  rozard_forms . 'fields/helper.php';
-            require_once  rozard_forms . 'object/registration.php';
+            // require_once  rozard_forms . 'object/registration.php';
         }
 
     
@@ -45,15 +45,19 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
             }
 
             if ( uri_has( 'user-edit.php' ) || uri_has( 'profile.php' ) || uri_has( 'admin-ajax' )  ) {
-                add_action( 'admin_init', array($this, 'users'   ) );
+                add_action( 'admin_init', array($this, 'users' ) );
             }
 
             if ( uri_has( 'user-edit.php' ) || uri_has( 'profile.php' ) || uri_has( 'admin-ajax' )  ) {
-                add_action( 'admin_init', array($this, 'users'   ) );
+                add_action( 'admin_init', array($this, 'users' ) );
             }
 
-            if ( uri_has( 'options' ) || uri_has( 'admin-ajax' )  ) {
-                add_action( 'admin_init', array($this, 'option'   ) );
+            if ( uri_has( 'options' ) || uri_has( 'admin-ajax' ) ) {
+                add_action( 'admin_init', array($this, 'option' ) );
+            }
+
+            if ( uri_has( 'wp-signup.php' ) || uri_has( 'admin-ajax' )  ) {
+                add_action( 'init', array($this, 'signup' ) );
             }
         }
     
@@ -61,7 +65,7 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
     
     /** METHOD */
 
-
+        
         public function media() {
             $media = apply_filters( 'media_form', $this->data );
             if ( has_filter( 'media_form' ) ){
@@ -87,6 +91,16 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
             if ( has_filter( 'option_form' ) ) { 
                 require_once rozard_forms . 'object/option.php';
                 new rozard_gamayun_option( $option );
+            }
+            return;
+        }
+
+
+        public function signup() {
+            $option = apply_filters( 'signup_form', $this->data );
+            if ( has_filter( 'signup_form' ) ) { 
+                require_once rozard_forms . 'object/signup.php';
+                new rozard_gamayun_signup( $option );
             }
             return;
         }

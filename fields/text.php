@@ -8,7 +8,7 @@
 
     // media
     function rozard_render_media_text_field( array $field, int $post_id ) {
-        $template = text_field_media( $field, $post_id );
+        $template = rozard_text_field_media( $field, $post_id );
         return $template;
     }
 
@@ -47,6 +47,20 @@
     function rozard_saving_option_text_field( array $field, string $value ) {
         $final = sanitize_text_field( $value );
         return $final;
+    }
+
+    
+
+    // signup
+    function rozard_render_signup_text_field( array $field, $unique ) {
+        rozard_text_field_signup( $field, $unique);
+    }
+
+    function rozard_saving_signup_text_field( array $field, int $user_id ) {
+        $unique = $field['unique'];
+        $datum  = $_POST[ $unique  ];
+        $value  = sanitize_text_field( $datum );
+        $final  = ( isset( $datum ) ) ? update_user_meta( $user_id, $unique, $value ) : null ;
     }
 
 
@@ -93,9 +107,9 @@
     // block ( general )
     function rozard_text_field_block( string $value, array $field ) {
 
-        $unique  = $field['unique'];
-        $attrb   = '';
-        $label   = sanitize_text_field( $field['label'] );
+        $unique = $field['unique'];
+        $attrb  = '';
+        $label  = sanitize_text_field( $field['label'] );
 
         printf( '<div class="row">' );
         printf( '<label for="%s">%s</label>', esc_attr( $unique ), esc_html( $label ) );
@@ -148,6 +162,22 @@
                 );
         $field = array( 'label' => $label, 'input' => 'html', 'html' => $model, 'help' => $helps );
         return $field;
+    }
+
+
+    // signup ( wp-signup.php )
+    function rozard_text_field_signup( array $field, $args ) {
+        $unique  = $field['unique'];
+        $attrb   = '';
+        $label   = sanitize_text_field( $field['label'] );
+        printf( '<div class="row">' );
+            printf( '<label for="%s">%s</label>', esc_attr( $unique ), esc_html( ucwords( $label )) );
+            printf( '<input type="text" id="%s" name="%s" %s value="">',
+                esc_attr( $unique ),
+                esc_attr( $unique ), 
+                $attrb,
+            );
+        printf( '</div>' );
     }
 
 

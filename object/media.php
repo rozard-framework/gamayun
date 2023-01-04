@@ -41,7 +41,7 @@ if ( ! class_exists('rozard_gamayun_media') ) {
                 }
                 $unique = $field['unique'];
                 require_once rozard_field . $field['type'] .'.php';
-                $form_fields[$field['unique']] = call_user_func( 'rozard_render_media_'. $field['type'] .'_field' , $field, $post->ID );
+                $form_fields[$unique] = call_user_func( 'rozard_render_media_'. $field['type'] .'_field' , $field, $post->ID );
             }
             return $form_fields;
         }
