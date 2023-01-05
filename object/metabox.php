@@ -42,7 +42,7 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
 
             foreach( $this->render as $id => $box ) {
               
-                if ( ! in_array( $post_type, $box['filter'] ) || ! has_caps( $box['access'] ) ) {
+                if ( ! in_array( $post_type, $box['filter'] ) ) {
                     continue;
                 }
 
@@ -71,22 +71,18 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
             $data = $parse['args']['fields'];
             $poid = $post->ID;
 
-            // validate users
-            $post_type = get_post_type_object( $post->post_type );
-			if ( ! usr_can( $post_type->cap->edit_post, $poid ) ) {
+            // checks users
+            if ( $this->usercan( $post, $poid ) ) {
                 return $poid;
-			}
-                     
+            }
+
+            // create nonce       
             wp_nonce_field( $poid , '_metanonce' );
 
+
+            // render forms
             foreach ( $data as $key => $field ) {
-                if ( ! in_array( $post->post_type, $field['filter'] ) ) {
-                    continue;
-                }
-                if ( ! has_caps( $field['caps'] ) ) {
-                    continue;
-                }
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_render_metabox_'. $field['type'] .'_field' , $field, $poid );
             }
         }
@@ -98,32 +94,37 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
 
         public function savings( $post_id, $post ){
 
-            // validate nonce
-            if ( ! isset( $_POST[ '_metanonce' ] ) || ! wp_verify_nonce( $_POST[ '_metanonce' ], $post_id ) ) {
+            // check nonce
+            if ( ! isset( $_POST[ '_metanonce' ] ) || ! wp_verify_nonce( $_POST[ '_metanonce' ], $post_id ) || $this->usercan( $post, $post_id )  ) {
                 return $post_id;
             }
 
-            // validate users
-            $post_type = get_post_type_object( $post->post_type );
-			if ( ! usr_can( $post_type->cap->edit_post, $post_id ) ) {
-                return $post_id;
-			}
             
             // disable autosave
             if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) { 
 				return $post_id;
 			}
 
+
+            // store field data
             foreach( $this->saving as $field ) {
                 if ( ! in_array( $post->post_type, $field['filter'] ) ) {
                     continue;
                 }
-                if ( ! has_caps( $field['caps'] ) ) {
-                    continue;
-                }
-                require_once rozard_field . $field['type'] .'.php';
+
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_saving_metabox_'. $field['type'] .'_field' , $field, $post_id );
             }
+        }
+
+        
+    /** SAVING */
+
+        private function usercan( $post, $post_id ) {
+            $post_type = get_post_type_object( $post->post_type );
+			if ( ! usr_can( $post_type->cap->edit_post, $post_id ) ) {
+                return false;
+			}
         }
     }
 }

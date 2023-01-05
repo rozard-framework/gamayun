@@ -55,10 +55,10 @@ if ( ! class_exists('rozard_gamayun_term') ) {
                 return;
             }
             foreach ( $this->fields as $key => $field ) {
-                if ( ! has_caps( $field['caps'] ) ) {
+                if ( ! usr_can( $field['rules']['access'] ) ) {
                     continue;
                 }
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_render_term_'. $field['type'] .'_field' , $field, null );
             }
         }
@@ -69,10 +69,10 @@ if ( ! class_exists('rozard_gamayun_term') ) {
                 return;
             }
             foreach ( $this->fields as $key => $field ) {
-                if ( ! has_caps( $field['caps'] ) ) {
+                if ( ! usr_can( $field['rules']['access'] ) ) {
                     continue;
                 }
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_render_term_'. $field['type'] .'_field' , $field, $term->term_id );
             }
         }
@@ -87,10 +87,10 @@ if ( ! class_exists('rozard_gamayun_term') ) {
                 return;
             }
             foreach ( $this->fields as $key => $field ) {
-                if ( ! has_caps( $field['caps'] ) ) {
+                if ( ! usr_can( $field['rules']['access'] ) ) {
                     continue;
                 }
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_saving_term_'. $field['type'] .'_field' , $field, $term_id );
             }
         }

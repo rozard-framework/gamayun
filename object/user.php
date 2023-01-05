@@ -55,7 +55,7 @@ if ( ! class_exists('rozard_gamayun_user') ) {
             $data_pv = $this->privat;
             $user_id = $this->userid( $user );
 
-            if ( ! empty( $data_pv ) && ! empty( $user_id ) && current_user_can( 'edit_user', $user_id ) ) {
+            if ( ! empty( $data_pv ) && ! empty( $user_id ) && usr_can( 'edit_user', $user_id ) ) {
                 foreach( $data_pv as $key => $data ) {
                     $this->parser( $key, $data, $user_id );
                 }
@@ -83,7 +83,6 @@ if ( ! class_exists('rozard_gamayun_user') ) {
 
             $unique = sanitize_key( $key );
             $titles = sanitize_text_field( $data['title'] );
-            $policy = sanitize_key( $data['policy'] );
             $fields = $data['fields'];
 
             // prepare field unique
@@ -101,10 +100,10 @@ if ( ! class_exists('rozard_gamayun_user') ) {
             printf( '<h2> %s </h2>', esc_html( $title ) );
             printf( '<table class="form-table" role="presentation">');
                 foreach ( $fields as $key => $field ) {
-                    if ( ! has_caps( $field['caps'] ) ) {
+                    if ( ! usr_can( $field['rules']['access'] ) ) {
                         continue;
                     }
-                    require_once rozard_field . $field['type'] .'.php';
+                    require_once forms_field . $field['type'] .'.php';
                     call_user_func( 'rozard_render_user_'. $field['type'] .'_field' , $field, $user_id );
                 }
             printf( '</table>');
@@ -124,10 +123,10 @@ if ( ! class_exists('rozard_gamayun_user') ) {
             }
 
             foreach( $this->saving as $field ) {
-                if ( ! has_caps( $field['caps'] ) ) {
+                if ( ! usr_can( $field['rules']['access'] ) ) {
                     continue;
                 }
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_saving_user_'. $field['type'] .'_field' , $field, $user_id );
             }
         }

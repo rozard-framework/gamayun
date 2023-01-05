@@ -18,59 +18,116 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
 
 
         public function __construct() {
-            $this->modular();
-            $this->hookers();
-        }
-    
-
-        private function modular() {
             define( 'rozard_forms', __DIR__ . '/' );
-            define( 'rozard_field', rozard_forms . 'fields/' );
-            require_once  rozard_forms . 'fields/helper.php';
-            // require_once  rozard_forms . 'object/registration.php';
+            $this->load();
         }
-
     
-        private function hookers() {
 
-            if ( uri_has( 'upload.php' ) || uri_has( 'media-new.php' ) || uri_has( 'admin-ajax' ) ) {
-                add_action( 'admin_init', array($this, 'media'   ) );
+        private function load() {
+            
+            define( 'forms_field', rozard_forms . 'fields/' );
+            define( 'forms_model', rozard_forms . 'models/' );
+            require_once  rozard_forms . 'fields/helper.php';
+            $this->runs();
+        }
+
+        private function runs() {
+
+            if ( uris_has( array( 'upload.php', 'media-new.php', 'admin-ajax' ))) {
+                add_action( 'admin_init', array( $this, 'media' ));
             }
-
-            if ( uri_has( 'post-new.php' ) || uri_has( 'post.php' )  || uri_has( 'admin-ajax' ) ) {
-                add_action( 'admin_init', array($this, 'metabox' ) );
+            else if ( uris_has( array ('post-new.php', 'post.php', 'admin-ajax' ))) {
+                add_action( 'admin_init', array( $this, 'metabox' ));
             }
-
-            if ( uri_has( 'term.php' ) ||  uri_has( 'edit-tags.php' ) || uri_has( 'admin-ajax') ) {
-                add_action( 'init', array($this, 'terms' ) );
+            else if ( uris_has( array(  'term.php', 'edit-tags.php', 'admin-ajax' ))) {
+                add_action( 'init', array( $this, 'term' ));
             }
-
-            if ( uri_has( 'user-edit.php' ) || uri_has( 'profile.php' ) || uri_has( 'admin-ajax' )  ) {
-                add_action( 'admin_init', array($this, 'users' ) );
+            else if ( uris_has( array( 'user-edit.php', 'profile.php', 'admin-ajax' ))) {
+                add_action( 'admin_init', array( $this, 'user' ));
             }
-
-            if ( uri_has( 'user-edit.php' ) || uri_has( 'profile.php' ) || uri_has( 'admin-ajax' )  ) {
-                add_action( 'admin_init', array($this, 'users' ) );
+            else if ( uris_has( array( 'options', 'admin-ajax' ))) {
+                add_action( 'admin_init', array( $this, 'option' ));
             }
-
-            if ( uri_has( 'options' ) || uri_has( 'admin-ajax' ) ) {
-                add_action( 'admin_init', array($this, 'option' ) );
-            }
-
-            if ( uri_has( 'wp-signup.php' ) || uri_has( 'admin-ajax' )  ) {
-                add_action( 'init', array($this, 'signup' ) );
+            else if ( uris_has( array(  'wp-signup.php', 'admin-ajax' ))) {
+                add_action( 'init', array( $this, 'signup' ));
             }
         }
+
+
+        private function data( string $scope ) {
+
+            // register form filter
+            $raw  = array();  
+            $data = apply_filters( 'register_form' , $raw );
+            $type = array( 'custom', 'media', 'metabox', 'option', 'signup', 'term', 'user'  );
+            
+
+            // validate laoder form
+            if ( ! has_filter( 'register_form' ) || ! in_array( $scope, $type ) || empty( $data[ $scope ] ) ){
+               return null;
+            }
+           
+            // property storage for extracted scope
+            $former = array();
+
+            // extracting kind value and set extended attribute
+            foreach( $data[ $scope ] as $form_id => $forms ) {
+
+                $form_cap = $forms['access'];
+                $scope_id = str_slug( $scope .'-'. $form_id );
+                $formated = array();
+                
+
+                // validate current user has capability to access this form
+                if ( ! has_caps( $form_cap ) ) {
+                    continue;
+                }
+
+                // process field data
+                foreach( $forms['fields'] as $field_id => $field ) {
+                    
+                    // validate current user has capability to access this field
+                    if ( ! usr_can( $field['rules']['access'] )) {
+                        continue;
+                    }
+
+                    // assigned unique value to field array key for prevent collision
+                    $unique = str_slug( $form_id .'-'. $field_id );
+
+                    // reassign all default field data to new object field
+                    $formated[$unique] = $field;
+
+                    // assign "unique" field attribute to new object field
+                    $formated[$unique]['rules']['unique'] = $unique;
+                    
+                    // assigned "filter" field attribute to new object field
+                    $formated[$unique]['rules']['filter'] = $forms['filter'];
+
+                    // assigned "datums" field attribute to new object field
+                    $formated[$unique]['rules']['datums'] = $forms['datums'];
+
+                }
+
+                // construct property form prototype model
+                $former[$scope_id]['title']   = $forms['title'];
+                $former[$scope_id]['filter']  = $forms['filter'];
+                $former[$scope_id]['context'] = $forms['context'];
+                $former[$scope_id]['layout']  = $forms['layout'];
+                $former[$scope_id]['fields']  = $formated;
+            }
+
+            // return form proto data request
+            return $former;
+        } 
     
 
     
     /** METHOD */
 
-        
         public function media() {
-            $media = apply_filters( 'media_form', $this->data );
-            if ( has_filter( 'media_form' ) ){
-                require_once  rozard_forms . 'object/media.php';
+            $media = $this->data( 'media' );
+            if ( ! empty( $media ) ) { 
+                require_once rozard_forms . 'object/media.php';
                 new rozard_gamayun_media( $media );
             }
             return;
@@ -78,8 +135,8 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
 
 
         public function metabox() {
-            $metabox = apply_filters( 'metabox_form', $this->data );
-            if ( has_filter( 'user_form' ) ) { 
+            $metabox = $this->data( 'metabox' );
+            if ( ! empty( $metabox ) ) { 
                 require_once rozard_forms . 'object/metabox.php';
                 new rozard_gamayun_metabox( $metabox );
             }
@@ -88,8 +145,8 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
 
 
         public function option() {
-            $option = apply_filters( 'option_form', $this->data );
-            if ( has_filter( 'option_form' ) ) { 
+            $option = $this->data( 'option' );
+            if ( ! empty( $option ) ) { 
                 require_once rozard_forms . 'object/option.php';
                 new rozard_gamayun_option( $option );
             }
@@ -98,8 +155,8 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
 
 
         public function signup() {
-            $option = apply_filters( 'signup_form', $this->data );
-            if ( has_filter( 'signup_form' ) ) { 
+            $signup = $this->data( 'signup' );
+            if ( ! empty( $signup ) ) { 
                 require_once rozard_forms . 'object/signup.php';
                 new rozard_gamayun_signup( $option );
             }
@@ -107,21 +164,20 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
         }
 
 
-        public function users() {
-            $users = apply_filters( 'user_form', $this->data );
-            if ( has_filter( 'user_form' ) ) { 
-                require_once  rozard_forms . 'object/user.php';
-                new rozard_gamayun_user( $users );
+        public function user() {
+            $user = $this->data( 'user' );
+            if ( ! empty( $user ) ) { 
+                require_once rozard_forms . 'object/user.php';
+                new rozard_gamayun_user( $user );
             }
             return;
         }
 
 
-        public function terms() {
-            $term = apply_filters( 'term_form', $this->data );
-
+        public function term() {
+            $term = $this->data( 'term' );
             if ( has_filter( 'term_form' ) ){
-                require_once  rozard_forms . 'object/term.php';
+                require_once rozard_forms . 'object/term.php';
                 foreach( $term as $key => $form ) {
                     new rozard_gamayun_term( $key, $form );
                 }

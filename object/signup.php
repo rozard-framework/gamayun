@@ -29,7 +29,7 @@ if ( ! class_exists( 'rozard_gamayun_signup' ) ) {
 
         public function render( $errors ) {
             foreach ( $this->fields as $key => $field ) {
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_render_signup_'. $field['type'] .'_field' , $field, null );
             }
         }
@@ -39,7 +39,7 @@ if ( ! class_exists( 'rozard_gamayun_signup' ) ) {
 
         public function saving( $user_id, $userdata ) {
             foreach ( $this->fields as $key => $field ) {
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_saving_signup_'. $field['type'] .'_field' , $field, $user_id );
             }
         }

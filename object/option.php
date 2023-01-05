@@ -19,7 +19,9 @@ if ( ! class_exists('rozard_gamayun_option') ) {
 
 
         private function hookers( $data ) {
+            
             foreach( $data as $form_id => $option ) {
+                dev( $option );
                 if ( ! uri_has( $option['filter'] ) && ! has_caps( $option['access']  ) ) {
                     continue;
                 }
@@ -56,7 +58,7 @@ if ( ! class_exists('rozard_gamayun_option') ) {
         private function parser( string $contex, string $filter, array $fields ) {
 
             foreach ( $fields as $key => $field ) {
-                if ( ! has_caps( $field['caps'] ) ) {
+                if ( ! usr_can( $field['rules']['access'] ) ) {
                     continue;
                 } 
 
@@ -68,7 +70,7 @@ if ( ! class_exists('rozard_gamayun_option') ) {
                 );
 
                 // module
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
 
                 // render
                 add_settings_field( $unique, $titles, $caller, $filter, $contex, $parser );

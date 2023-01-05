@@ -16,17 +16,17 @@ if ( ! class_exists('rozard_gamayun_media') ) {
 
 
         public function __construct( array $data ) {
-            $this->hookers( $data );
+            $this->hook( $data );
         }
 
 
-        private function hookers( array $data ) {
+        private function hook( array $data ) {
 
             // load field datums
             $this->fields = $this->prepare( $data );
                  
-            add_filter( 'attachment_fields_to_edit', array( $this, 'editer' ), 10, 2);
-            add_filter( 'attachment_fields_to_save', array( $this, 'saving' ), 10, 2);
+            add_filter( 'attachment_fields_to_edit', array( $this, 'edit' ), 10, 2);
+            add_filter( 'attachment_fields_to_save', array( $this, 'save' ), 10, 2);
         }
 
 
@@ -34,13 +34,13 @@ if ( ! class_exists('rozard_gamayun_media') ) {
     /** RENDER */
 
 
-        public function editer( $form_fields, $post ) {
+        public function edit( $form_fields, $post ) {
             foreach ( $this->fields as $key => $field ) {
-                if ( ! has_caps( $field['caps'] ) ) { 
+                if ( ! usr_can( $field['access']['caps'] ) ) { 
                     continue;
                 }
                 $unique = $field['unique'];
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 $form_fields[$unique] = call_user_func( 'rozard_render_media_'. $field['type'] .'_field' , $field, $post->ID );
             }
             return $form_fields;
@@ -51,12 +51,12 @@ if ( ! class_exists('rozard_gamayun_media') ) {
     /** SAVING */
 
 
-        public function saving( $post, $attachment ) {
+        public function save( $post, $attachment ) {
             foreach ( $this->fields as $key => $field ) {
-                if ( ! has_caps( $field['caps'] ) ) {
+                if ( ! usr_can( $field['access']['caps'] ) ) {
                     continue;
                 }
-                require_once rozard_field . $field['type'] .'.php';
+                require_once forms_field . $field['type'] .'.php';
                 call_user_func( 'rozard_saving_media_'. $field['type'] .'_field' , $field, array( $post, $attachment ) );
             }  
             return $post;
