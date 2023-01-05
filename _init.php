@@ -7,6 +7,7 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
     
     class rozard_gamayun_forms{
     
+        
     /** DATUMS */
 
         
@@ -128,8 +129,6 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
             return;
         }
     
-
-
     /** HELPER */
 
 
@@ -145,7 +144,6 @@ if ( ! class_exists('rozard_gamayun_forms') ) {
             }
             return $saved;
         }
-    
     }
     new rozard_gamayun_forms;
 }

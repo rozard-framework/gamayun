@@ -20,7 +20,7 @@ if ( ! class_exists('rozard_gamayun_option') ) {
 
         private function hookers( $data ) {
             foreach( $data as $form_id => $option ) {
-                if ( ! uri_has( $option['filter'] ) && ! is_caps( $option['access']  ) ) {
+                if ( ! uri_has( $option['filter'] ) && ! has_caps( $option['access']  ) ) {
                     continue;
                 }
                 $this->caller( $form_id , $option );
@@ -44,8 +44,8 @@ if ( ! class_exists('rozard_gamayun_option') ) {
         private function caller( string $form_id, array $option ) {
 
             // prepare option data
-            $contex = $option['context'];
-            $filter = $option['filter'];
+            $contex = pure_slug( $option['context'] );
+            $filter = pure_slug( $option['filter'] );
             $fields = $this->unique( $form_id, $option['fields']);
 
             $this->parser( $contex, $filter, $fields);
@@ -56,13 +56,13 @@ if ( ! class_exists('rozard_gamayun_option') ) {
         private function parser( string $contex, string $filter, array $fields ) {
 
             foreach ( $fields as $key => $field ) {
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 } 
 
                 $caller = array( $this, 'render' );
                 $unique = str_slug( $field['unique'] );
-                $titles = sanitize_text_field( $field['label'] );
+                $titles = pure_text( $field['label'] );
                 $parser = array(
                     'field'     => $field,
                 );

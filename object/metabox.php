@@ -42,22 +42,22 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
 
             foreach( $this->render as $id => $box ) {
               
-                if ( ! in_array( $post_type, $box['filter'] ) || ! is_caps( $box['access'] ) ) {
+                if ( ! in_array( $post_type, $box['filter'] ) || ! has_caps( $box['access'] ) ) {
                     continue;
                 }
 
-                $titles  =  __( sanitize_text_field( $box['title'] ) , 'rozard-engine' ) ;
-                $contex  =  sanitize_key( $box['context'] );
-                $policy  =  sanitize_key( $box['policy'] );
+                $titles  =  __( pure_text( $box['title'] ) , 'rozard-engine' ) ;
+                $contex  =  pure_key( $box['context'] );
+                $policy  =  is_bole( $box['policy'] );
                 $render  =  array( $this, 'renders' );
                 $unique  =  str_slug( $id );
-                $filter  =  $box['filter'];
+                $filter  =  pure_array( $box['filter'] );
                 $fields  =  $box['fields'];
              
                 // prepare field unique
                 foreach ( $fields as $key => $field ) {
                     $fields[$key]['unique'] = str_slug( $unique .'-'. $key );
-                    $fields[$key]['filter'] = sanitize_html_class( $filter );
+                    $fields[$key]['filter'] = $filter;
                 }
                 $parser  =  array( 'fields' => $fields );
                
@@ -73,7 +73,7 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
 
             // validate users
             $post_type = get_post_type_object( $post->post_type );
-			if ( ! current_user_can( $post_type->cap->edit_post, $poid ) ) {
+			if ( ! usr_can( $post_type->cap->edit_post, $poid ) ) {
                 return $poid;
 			}
                      
@@ -83,7 +83,7 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
                 if ( ! in_array( $post->post_type, $field['filter'] ) ) {
                     continue;
                 }
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';
@@ -105,7 +105,7 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
 
             // validate users
             $post_type = get_post_type_object( $post->post_type );
-			if ( ! current_user_can( $post_type->cap->edit_post, $post_id ) ) {
+			if ( ! usr_can( $post_type->cap->edit_post, $post_id ) ) {
                 return $post_id;
 			}
             
@@ -118,7 +118,7 @@ if ( ! class_exists('rozard_gamayun_metabox') ) {
                 if ( ! in_array( $post->post_type, $field['filter'] ) ) {
                     continue;
                 }
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';

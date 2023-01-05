@@ -31,7 +31,7 @@ if ( ! class_exists('rozard_gamayun_term') ) {
             $this->fields = $fields;
 
             // asign terms
-            $this->terms = $data[ 'filter' ];
+            $this->terms = pure_slug( $data[ 'filter' ] );
            
             // init hooker
             $this->hookers($this->terms);
@@ -55,7 +55,7 @@ if ( ! class_exists('rozard_gamayun_term') ) {
                 return;
             }
             foreach ( $this->fields as $key => $field ) {
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';
@@ -69,7 +69,7 @@ if ( ! class_exists('rozard_gamayun_term') ) {
                 return;
             }
             foreach ( $this->fields as $key => $field ) {
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';
@@ -87,7 +87,7 @@ if ( ! class_exists('rozard_gamayun_term') ) {
                 return;
             }
             foreach ( $this->fields as $key => $field ) {
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';

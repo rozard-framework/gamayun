@@ -6,8 +6,13 @@ if ( ! class_exists( 'rozard_gamayun_signup' ) ) {
 
     class rozard_gamayun_signup extends rozard_gamayun_forms{
 
+    /** DATUM */
+
 
         private array $fields;
+
+
+    /** RUNIT */
 
         public function __construct( array $data ) {
 
@@ -20,12 +25,17 @@ if ( ! class_exists( 'rozard_gamayun_signup' ) ) {
         }
 
 
+    /** RENDER */
+
         public function render( $errors ) {
             foreach ( $this->fields as $key => $field ) {
                 require_once rozard_field . $field['type'] .'.php';
                 call_user_func( 'rozard_render_signup_'. $field['type'] .'_field' , $field, null );
             }
         }
+
+
+    /** SAVING */
 
         public function saving( $user_id, $userdata ) {
             foreach ( $this->fields as $key => $field ) {

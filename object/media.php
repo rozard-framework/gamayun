@@ -36,7 +36,7 @@ if ( ! class_exists('rozard_gamayun_media') ) {
 
         public function editer( $form_fields, $post ) {
             foreach ( $this->fields as $key => $field ) {
-                if ( ! is_caps( $field['caps'] ) ) { 
+                if ( ! has_caps( $field['caps'] ) ) { 
                     continue;
                 }
                 $unique = $field['unique'];
@@ -53,7 +53,7 @@ if ( ! class_exists('rozard_gamayun_media') ) {
 
         public function saving( $post, $attachment ) {
             foreach ( $this->fields as $key => $field ) {
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';

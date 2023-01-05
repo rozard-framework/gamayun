@@ -101,7 +101,7 @@ if ( ! class_exists('rozard_gamayun_user') ) {
             printf( '<h2> %s </h2>', esc_html( $title ) );
             printf( '<table class="form-table" role="presentation">');
                 foreach ( $fields as $key => $field ) {
-                    if ( ! is_caps( $field['caps'] ) ) {
+                    if ( ! has_caps( $field['caps'] ) ) {
                         continue;
                     }
                     require_once rozard_field . $field['type'] .'.php';
@@ -124,7 +124,7 @@ if ( ! class_exists('rozard_gamayun_user') ) {
             }
 
             foreach( $this->saving as $field ) {
-                if ( ! is_caps( $field['caps'] ) ) {
+                if ( ! has_caps( $field['caps'] ) ) {
                     continue;
                 }
                 require_once rozard_field . $field['type'] .'.php';
@@ -142,8 +142,8 @@ if ( ! class_exists('rozard_gamayun_user') ) {
                 $user_id = $user->ID;
                 return $user_id;
             }
-            else if ( empty( $user->ID ) && gets_uri_param( 'user_id' ) !== null ) {
-                $user_id = gets_uri_param( 'user_id' );
+            else if ( empty( $user->ID ) && take_uri_param( 'user_id' ) !== null ) {
+                $user_id = take_uri_param( 'user_id' );
                 return $user_id;
             } 
             else if ( ! empty( get_current_user_id() ) ) {
